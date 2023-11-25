@@ -22,6 +22,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math"
+	"runtime/debug"
 	"sort"
 	"strconv"
 	"sync"
@@ -97,6 +98,10 @@ func (o *oracle) readTs() uint64 {
 	readTs = o.nextTxnTs - 1
 	o.readMark.Begin(readTs)
 	o.Unlock()
+
+	if readTs == 6 {
+		debug.PrintStack()
+	}
 
 	// Wait for all txns which have no conflicts, have been assigned a commit
 	// timestamp and are going through the write to value log and LSM tree
@@ -721,6 +726,7 @@ func (txn *Txn) CommitWith(cb func(error)) {
 		// callback might be acquiring the same locks. Instead run the callback
 		// from another goroutine.
 		go runTxnCallback(&txnCb{user: cb, err: nil})
+		txn.Discard()
 		return
 	}
 
