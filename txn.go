@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/hex"
+	"fmt"
 	"math"
 	"sort"
 	"strconv"
@@ -236,6 +237,8 @@ func (o *oracle) cleanupCommittedTransactions() { // Must be called under o.Lock
 		tmp = append(tmp, txn)
 	}
 	o.committedTxns = tmp
+	fmt.Println("maxReadTs: ", maxReadTs)
+	fmt.Println("Uncleaned txs num: ", len(o.committedTxns))
 }
 
 func (o *oracle) doneCommit(cts uint64) {
