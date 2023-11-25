@@ -225,6 +225,7 @@ func (o *oracle) cleanupCommittedTransactions() { // Must be called under o.Lock
 	// do not run clean up if the maxReadTs (read timestamp of the
 	// oldest transaction that is still in flight) has not increased
 	if maxReadTs == o.lastCleanupTs {
+		fmt.Println("skipped cleanup, maxReadTs: ", maxReadTs)
 		return
 	}
 	o.lastCleanupTs = maxReadTs
